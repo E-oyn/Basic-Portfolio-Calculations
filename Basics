@@ -6,7 +6,7 @@ import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
 from numpy import arange
-
+from termcolor import colored
 akbank = 'AKBNK.IS'
 isbank = 'ISCTR.IS'
 yapi = 'YKBNK.IS'
@@ -46,11 +46,11 @@ print(weights)
 
 #To get the Sharpe Ratio calculate expected yearly portfolio return and
 expected_ret = np.sum((log_ret.mean() * weights) * 252)
-print('__________Expected Return____________')
+print(colored('__________Expected Return____________', 'red'))
 print(expected_ret)
 expected_vol = np.sqrt(np.dot(weights.T,np.dot(log_ret.cov()*252,weights))) #expected volatility
-print('__________Expected Volatility___________')
+print(colored('__________Expected Volatility___________', 'red'))
 print(expected_vol)
 sr = (expected_ret-risk_free_rate)/expected_vol
-print('______________Sharpe Ratio_____________')
+print(colored('__________Sharpe Ratio_____________', 'red'))
 print(sr)
