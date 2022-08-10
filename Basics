@@ -1,0 +1,56 @@
+import pandas as pd
+import pandas_datareader as wb
+import math
+import numpy as np
+import pandas as pd
+import datetime as dt
+import matplotlib.pyplot as plt
+from numpy import arange
+
+akbank = 'AKBNK.IS'
+isbank = 'ISCTR.IS'
+yapi = 'YKBNK.IS'
+garanti = 'GARAN.IS'
+start = dt.datetime(2019,1,1)
+end = dt.datetime(2022,8,3)
+risk_free_rate = .14
+akbank = wb.DataReader(akbank, 'yahoo', start, end)['Adj Close']
+isbank = wb.DataReader(isbank, 'yahoo', start, end)['Adj Close']
+yapi= wb.DataReader(yapi, 'yahoo', start, end)['Adj Close']
+garanti = wb.DataReader(garanti, 'yahoo', start, end)['Adj Close']
+
+stocks = pd.concat([akbank,isbank,yapi,garanti],axis=1)
+stocks.columns = ['Akbank', 'Isbank', 'Yapi-Kredi', 'Garanti']
+#print(stocks.head())
+
+print('Daily Return Mean ')
+print(stocks.pct_change(1).mean())
+print('Correlation Between Stock Returns')
+print(stocks.pct_change(1).corr())
+#Switching log returns
+log_ret = np.log(stocks/stocks.shift(1))
+#print(log_ret.head())
+log_ret.hist(bins=100, figsize = (12,8))
+plt.tight_layout()
+plt.show()
+print('Log Return Covariances ')
+print(log_ret.cov())
+print('Log Returns Correlations')
+print(log_ret.corr())
+
+#Creating Random Weights for stock picks
+np.random.seed(101) #this step is to take same random numbers for each time running the code
+weights = np.array(np.random.random(4))
+weights = weights/np.sum(weights)
+print(weights)
+
+#To get the Sharpe Ratio calculate expected yearly portfolio return and
+expected_ret = np.sum((log_ret.mean() * weights) * 252)
+print('__________Expected Return____________')
+print(expected_ret)
+expected_vol = np.sqrt(np.dot(weights.T,np.dot(log_ret.cov()*252,weights))) #expected volatility
+print('__________Expected Volatility___________')
+print(expected_vol)
+sr = (expected_ret-risk_free_rate)/expected_vol
+print('______________Sharpe Ratio_____________')
+print(sr)
